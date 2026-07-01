@@ -170,4 +170,5 @@ Les tests ont été réalisés manuellement à travers :
 
 ## 👤 Auteur
 
-Abdel Mourid — Projet réalisé dans le cadre de mon portfolio de développement full-stack.
+Abdel Mourid
+Nikola
