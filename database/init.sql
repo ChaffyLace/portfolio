@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS stock_movements (
 );
 
 INSERT INTO users (name, email, password, role) 
-VALUES ('admin@admin.com', 'admin123', 'admin');
+VALUES ('Admin StockFlow', 'admin@admin.com', SHA2('admin123', 256), 'admin');
 
 INSERT INTO products (sku, name, quantity, alert_threshold) 
 VALUES 

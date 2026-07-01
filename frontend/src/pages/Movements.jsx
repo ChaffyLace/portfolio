@@ -20,7 +20,7 @@ export default function Movements() {
 
   useEffect(() => {
     getProducts()
-      .then(res => setProducts(res.data.data ?? []))
+      .then(res => setProducts(res.data ?? []))
       .finally(() => setLoadingProducts(false))
   }, [])
 
@@ -33,22 +33,21 @@ export default function Movements() {
     setFormError('')
     setSaving(true)
     try {
-      await addMovement(
-        parseInt(form.product_id),
-        user?.id ?? 1,
-        parseInt(form.quantity_changed),
-        form.reason
-      )
-      const product = products.find(p => p.id === parseInt(form.product_id))
+      const productId = parseInt(form.product_id)
+      await addMovement(productId, {
+        user_id: user?.id ?? 1,
+        quantity_changed: parseInt(form.quantity_changed),
+        reason: form.reason
+      })
+      const product = products.find(p => p.id === productId)
       const qty = parseInt(form.quantity_changed)
       const dir = qty > 0 ? `+${qty} unité(s) ajoutée(s)` : `${qty} unité(s) retirée(s)`
       setSuccess(`Mouvement enregistré — ${dir} sur « ${product?.name ?? 'produit'} »`)
       setForm(EMPTY_FORM)
       setTimeout(() => setSuccess(''), 5000)
-      // Recharge les produits pour avoir les qty à jour
-      getProducts().then(res => setProducts(res.data.data ?? []))
+      getProducts().then(res => setProducts(res.data ?? []))
     } catch (err) {
-      setFormError(err.response?.data?.detail || "Erreur lors de l'enregistrement")
+      setFormError(err.message || "Erreur lors de l'enregistrement")
     } finally {
       setSaving(false)
     }
@@ -68,7 +67,6 @@ export default function Movements() {
       {success && <div className="page-success">{success}</div>}
 
       <div className="movements-grid">
-        {/* Formulaire */}
         <section className="section">
           <div className="section-header">
             <h2 className="section-title">Nouveau mouvement</h2>
@@ -122,7 +120,6 @@ export default function Movements() {
           </div>
         </section>
 
-        {/* Aperçu produit sélectionné */}
         <section className="section movement-preview">
           <div className="section-header">
             <h2 className="section-title">Aperçu produit</h2>
@@ -167,15 +164,6 @@ export default function Movements() {
             )}
           </div>
         </section>
-      </div>
-
-      {/* Note sur l'historique */}
-      <div className="movements-note">
-        <span className="movements-note__icon">ℹ️</span>
-        <span>
-          L'historique des mouvements sera disponible dès que l'endpoint{' '}
-          <code>GET /movements</code> sera ajouté côté backend.
-        </span>
       </div>
     </Layout>
   )

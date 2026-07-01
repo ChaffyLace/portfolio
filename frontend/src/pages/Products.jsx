@@ -20,7 +20,7 @@ export default function Products() {
   function load() {
     setLoading(true)
     getProducts()
-      .then(res => setProducts(res.data.data ?? []))
+      .then(res => setProducts(res.data ?? []))
       .catch(() => setError('Impossible de charger les produits'))
       .finally(() => setLoading(false))
   }
@@ -36,19 +36,19 @@ export default function Products() {
     setFormError('')
     setSaving(true)
     try {
-      await createProduct(
-        form.sku,
-        form.name,
-        parseInt(form.quantity),
-        parseInt(form.alert_threshold)
-      )
+      await createProduct({
+        sku: form.sku,
+        name: form.name,
+        quantity: parseInt(form.quantity),
+        alert_threshold: parseInt(form.alert_threshold)
+      })
       setSuccess('Produit créé avec succès')
       setForm(EMPTY_FORM)
       setShowForm(false)
       load()
       setTimeout(() => setSuccess(''), 4000)
     } catch (err) {
-      setFormError(err.response?.data?.detail || 'Erreur lors de la création')
+      setFormError(err.message || 'Erreur lors de la création')
     } finally {
       setSaving(false)
     }

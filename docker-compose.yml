@@ -1,57 +1,42 @@
+version: '3.8'
+
 services:
-  db:
+  stockflow_db:
     image: mysql:8.0
     container_name: stockflow_db
     restart: always
     environment:
-      MYSQL_DATABASE: stockflow_db
       MYSQL_ROOT_PASSWORD: root_password_secure
+      MYSQL_DATABASE: stockflow_db
     ports:
       - "3306:3306"
     volumes:
-      - ./database:/docker-entrypoint-initdb.d
       - db_data:/var/lib/mysql
-    networks:
-      - stockflow_network
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  backend:
+  stockflow_backend:
     build: ./backend
     container_name: stockflow_backend
     restart: always
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/app
     environment:
-      - DB_HOST=db
+      - DB_HOST=stockflow_db
       - DB_USER=root
       - DB_PASSWORD=root_password_secure
       - DB_NAME=stockflow_db
+    ports:
+      - "8000:8000"
     depends_on:
-      - db
-    networks:
-      - stockflow_network
-      
-  frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
+      - stockflow_db
+
+  stockflow_frontend:
+    build: ./frontend
     container_name: stockflow_frontend
     restart: always
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     depends_on:
-      - backend
-    networks:
-      - stockflow_network
+      - stockflow_backend
 
 volumes:
   db_data:
-
-networks:
-  stockflow_network:
-    driver: bridge
+  

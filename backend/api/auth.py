@@ -1,8 +1,21 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 from services.facade import stockflow_facade
+from datetime import datetime, timedelta
+import jwt
+import os
 
 router = APIRouter(prefix="/auth", tags=["Authentification"])
+
+SECRET_KEY = os.getenv("SECRET_KEY", "change-this-secret-in-production")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24h
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 class LoginRequest(BaseModel):
     email: str
@@ -20,10 +33,22 @@ def login(data: LoginRequest):
         user = stockflow_facade.login_user(data.email, data.password)
         if not user:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, 
+                status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Identifiants incorrects"
             )
-        return {"status": "success", "user": user}
+        token = create_access_token({
+            "sub": str(user["id"]),
+            "email": user["email"],
+            "role": user["role"]
+        })
+        return {
+            "status": "success",
+            "access_token": token,
+            "token_type": "bearer",
+            "user": user
+        }
+    except HTTPException:
+        raise
     except ValueError as val_err:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(val_err))
     except Exception as e:

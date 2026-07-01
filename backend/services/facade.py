@@ -1,3 +1,4 @@
+import hashlib
 from persistence.repository import MySQLRepository
 from models.user import User
 from models.product import Product
@@ -8,13 +9,16 @@ class StockFlowFacade:
         self.repo = MySQLRepository()
 
     def login_user(self, email, password):
-        User(name="Login_Check", email=email, password=password) 
-        user_data = self.repo.get_user_by_credentials(email, password)
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        user_data = self.repo.get_user_by_credentials(email, hashed_password)
         return user_data
 
     def create_new_user(self, name, email, password, role="user"):
-        User(name=name, email=email, password=password, role=role)
-        self.repo.add_user(name, email, password, role)
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest() 
+        
+        User(name=name, email=email, password=hashed_password, role=role)
+
+        self.repo.add_user(name, email, hashed_password, role)
 
     def fetch_products(self):
         return self.repo.get_all_products()
@@ -28,7 +32,7 @@ class StockFlowFacade:
         return self.repo.get_history(product_id)
 
     def create_new_product(self, requesting_user_id: int, sku, name, quantity, alert_threshold):
-        """Crée un produit SEULEMENT si l'utilisateur est admin"""
+        """Crée un produit SEULEMENT si l'utilisateur est admin (RBAC)"""
         user_role = self.repo.get_user_role(requesting_user_id)
         if user_role != "admin":
             raise PermissionError("Action interdite : Seul un administrateur peut ajouter des produits.")

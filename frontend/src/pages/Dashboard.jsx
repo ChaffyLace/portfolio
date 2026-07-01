@@ -13,7 +13,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     getProducts()
-      .then(res => setProducts(res.data.data ?? []))
+      .then(res => setProducts(res.data ?? []))
       .catch(() => setError('Impossible de charger les produits'))
       .finally(() => setLoading(false))
   }, [])
@@ -28,7 +28,7 @@ export default function Dashboard() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Dashboard</h1>
-          <p className="page-sub">Bonjour, {user?.name ?? 'utilisateur'} — voici l'état de votre stock</p>
+          <p className="page-sub">Bonjour, {user?.name ?? 'utilisateur'} voici l'état de votre stock</p>
         </div>
         <Link to="/products" className="btn btn--primary btn--sm">+ Nouveau produit</Link>
       </div>
@@ -63,7 +63,7 @@ export default function Dashboard() {
         {loading ? (
           <div className="loading">Chargement…</div>
         ) : alerts === 0 ? (
-          <div className="empty-state">Aucun produit en alerte. Tout est à jour ✓</div>
+          <div className="empty-state">Aucun produit en alerte. Tout est à jour</div>
         ) : (
           <table className="data-table">
             <thead>

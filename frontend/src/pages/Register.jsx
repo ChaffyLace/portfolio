@@ -22,7 +22,7 @@ export default function Register() {
       await register(form.name, form.email, form.password, form.role)
       navigate('/login')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Erreur lors de la création du compte')
+      setError(err.response?.data?.detail || err.message || 'Erreur lors de la création du compte')
     } finally {
       setLoading(false)
     }
@@ -52,6 +52,7 @@ export default function Register() {
               value={form.name}
               onChange={handleChange}
               required
+              autoComplete="name"
             />
           </div>
           <div className="field">
@@ -79,6 +80,7 @@ export default function Register() {
               value={form.password}
               onChange={handleChange}
               required
+              autoComplete="new-password"
             />
           </div>
           <div className="field">

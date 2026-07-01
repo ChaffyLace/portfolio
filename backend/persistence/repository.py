@@ -5,7 +5,7 @@ import time
 class MySQLRepository:
     def __init__(self):
         self.db_config = {
-            "host": os.getenv("DB_HOST", "db"),
+            "host": os.getenv("DB_HOST", "stockflow_db"),
             "user": os.getenv("DB_USER", "root"),
             "password": os.getenv("DB_PASSWORD", "root_password_secure"),
             "database": os.getenv("DB_NAME", "stockflow_db")
@@ -138,6 +138,7 @@ class MySQLRepository:
         cursor.close()
         conn.close()
         return result["role"] if result else None
+        
 
     def get_dashboard_metrics(self):
         """Fonction 4 : Récupère les indicateurs clés (KPIs) en une seule fois"""
