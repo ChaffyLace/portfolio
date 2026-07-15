@@ -64,6 +64,26 @@
   padding: 10px 14px;
   font-size: 0.875rem;
   margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.auth-error--blocked {
+  background: #2d1a1a;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+  font-weight: 600;
+  padding: 14px;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
 }
 
 .auth-form {
@@ -89,7 +109,6 @@
   text-decoration: underline;
 }
 
-/* ── Champs génériques ─────────────────────────── */
 .field {
   display: flex;
   flex-direction: column;
@@ -120,7 +139,12 @@
   outline: none;
 }
 
-/* ── Boutons génériques ────────────────────────── */
+.field__input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--color-bg);
+}
+
 .btn {
   padding: 10px 18px;
   border-radius: var(--radius-sm);
@@ -142,9 +166,7 @@
   color: #1b1f24;
 }
 
-.btn--primary:hover:not(:disabled) {
-  opacity: 0.88;
-}
+.btn--primary:hover:not(:disabled) { opacity: 0.88; }
 
 .btn--secondary {
   background: transparent;
@@ -152,9 +174,7 @@
   border: 1px solid var(--color-border);
 }
 
-.btn--secondary:hover:not(:disabled) {
-  border-color: var(--color-ink-soft);
-}
+.btn--secondary:hover:not(:disabled) { border-color: var(--color-ink-soft); }
 
 .btn--danger {
   background: transparent;
@@ -163,5 +183,13 @@
 }
 
 .btn--full { width: 100%; justify-content: center; }
+.btn--sm   { padding: 6px 12px; font-size: 0.8rem; }
 
-.btn--sm { padding: 6px 12px; font-size: 0.8rem; }
+.otp-input {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  padding: 16px;
+}

@@ -11,82 +11,52 @@
   gap: 16px;
 }
 
-.movement-preview .preview-body {
-  padding: 20px;
-}
+.movement-preview .preview-body { padding: 20px; }
 
-.product-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
+.product-info { display: flex; flex-direction: column; }
 
 .product-info__row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--color-border-soft);
+  padding: 11px 0;
+  border-bottom: 1px solid #f3f4f6;
 }
-
-.product-info__row:last-of-type {
-  border-bottom: none;
-}
+.product-info__row:last-of-type { border-bottom: none; }
 
 .product-info__row--preview {
-  background: var(--color-accent-soft);
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  margin-top: 8px;
+  background: #eff6ff;
+  padding: 11px 14px;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 1px solid #bfdbfe;
 }
 
 .product-info__key {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  color: var(--color-muted);
+  color: #9ca3af;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .product-info__val {
   font-size: 0.875rem;
   font-weight: 500;
+  color: #111827;
 }
+.product-info__val.mono { font-family: 'Courier New', monospace; }
+.product-info__val.big  { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em; }
 
-.product-info__val.big {
-  font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-}
+.product-info__status { margin-top: 16px; }
 
-.product-info__status {
-  margin-top: 14px;
-}
+.badge         { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+.badge--danger { background: #fee2e2; color: #dc2626; }
+.badge--warn   { background: #fef3c7; color: #d97706; }
+.badge--success{ background: #d1fae5; color: #059669; }
 
-.movements-note {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 14px 20px;
-  font-size: 0.875rem;
-  color: var(--color-muted);
-}
-
-.movements-note code {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  background: var(--color-bg);
-  padding: 2px 6px;
-  border-radius: 3px;
-  border: 1px solid var(--color-border);
-  color: var(--color-ink-soft);
-}
+.empty-state { padding: 48px; text-align: center; color: #9ca3af; font-size: 0.9rem; }
 
 @media (max-width: 768px) {
-  .movements-grid {
-    grid-template-columns: 1fr;
-  }
+  .movements-grid { grid-template-columns: 1fr; }
 }

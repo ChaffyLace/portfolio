@@ -6,18 +6,24 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Products from './pages/Products'
 import Movements from './pages/Movements'
+import History from './pages/History'
+import Alerts from './pages/Alerts'
+import InviteUser from './pages/InviteUser'
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login"    element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login"     element={<Login />} />
+          <Route path="/register"  element={<Register />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/products"  element={<PrivateRoute><Products /></PrivateRoute>} />
           <Route path="/movements" element={<PrivateRoute><Movements /></PrivateRoute>} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/history"   element={<PrivateRoute><History /></PrivateRoute>} />
+          <Route path="/alerts"    element={<PrivateRoute><Alerts /></PrivateRoute>} />
+          <Route path="/invite"    element={<PrivateRoute><InviteUser /></PrivateRoute>} />
+          <Route path="*"          element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

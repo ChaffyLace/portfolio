@@ -4,9 +4,9 @@ import { useAuth } from '../context/AuthContext'
 import './Auth.css'
 
 export default function Register() {
-  const { register } = useAuth()
+  const { registerCompany } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user' })
+  const [form, setForm] = useState({ company_name: '', admin_name: '', admin_email: '', admin_password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -19,10 +19,10 @@ export default function Register() {
     setError('')
     setLoading(true)
     try {
-      await register(form.name, form.email, form.password, form.role)
+      await registerCompany(form)
       navigate('/login')
     } catch (err) {
-      setError(err.response?.data?.detail || err.message || 'Erreur lors de la création du compte')
+      setError(err.message || 'Erreur lors de la création du compte')
     } finally {
       setLoading(false)
     }
@@ -35,69 +35,69 @@ export default function Register() {
           <span className="auth-logo">SF</span>
           <span className="auth-appname">StockFlow</span>
         </div>
-        <h1 className="auth-heading">Créer un compte</h1>
-        <p className="auth-sub">Renseignez vos informations pour commencer</p>
+        <h1 className="auth-heading">Créer une entreprise</h1>
+        <p className="auth-sub">Inscrivez votre organisation pour commencer</p>
 
         {error && <div className="auth-error">{error}</div>}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="field">
-            <label className="field__label" htmlFor="name">Nom complet</label>
+            <label className="field__label" htmlFor="company_name">Nom de l'entreprise</label>
             <input
-              id="name"
-              name="name"
+              id="company_name"
+              name="company_name"
+              type="text"
+              className="field__input"
+              placeholder="Ma Super Boîte"
+              value={form.company_name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="field">
+            <label className="field__label" htmlFor="admin_name">Votre nom (Admin)</label>
+            <input
+              id="admin_name"
+              name="admin_name"
               type="text"
               className="field__input"
               placeholder="Jean Dupont"
-              value={form.name}
+              value={form.admin_name}
               onChange={handleChange}
               required
               autoComplete="name"
             />
           </div>
           <div className="field">
-            <label className="field__label" htmlFor="email">Email</label>
+            <label className="field__label" htmlFor="admin_email">Email professionnel</label>
             <input
-              id="email"
-              name="email"
+              id="admin_email"
+              name="admin_email"
               type="email"
               className="field__input"
-              placeholder="vous@example.com"
-              value={form.email}
+              placeholder="jean@masuperboite.com"
+              value={form.admin_email}
               onChange={handleChange}
               required
               autoComplete="email"
             />
           </div>
           <div className="field">
-            <label className="field__label" htmlFor="password">Mot de passe</label>
+            <label className="field__label" htmlFor="admin_password">Mot de passe</label>
             <input
-              id="password"
-              name="password"
+              id="admin_password"
+              name="admin_password"
               type="password"
               className="field__input"
               placeholder="••••••••"
-              value={form.password}
+              value={form.admin_password}
               onChange={handleChange}
               required
               autoComplete="new-password"
             />
           </div>
-          <div className="field">
-            <label className="field__label" htmlFor="role">Rôle</label>
-            <select
-              id="role"
-              name="role"
-              className="field__input"
-              value={form.role}
-              onChange={handleChange}
-            >
-              <option value="user">Utilisateur</option>
-              <option value="admin">Administrateur</option>
-            </select>
-          </div>
           <button className="btn btn--primary btn--full" type="submit" disabled={loading}>
-            {loading ? 'Création…' : 'Créer le compte'}
+            {loading ? 'Création…' : "Créer l'espace entreprise"}
           </button>
         </form>
 

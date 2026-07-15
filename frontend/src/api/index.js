@@ -1,109 +1,116 @@
 const API_URL = 'http://localhost:8000/api';
 
-const getAuthHeaders = () => {
+// Fonction utilitaire pour ajouter le token automatiquement à tes requêtes
+const fetchWithAuth = async (endpoint, options = {}) => {
   const token = localStorage.getItem('sf_token');
-  const headers = {};
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
 
-  try {
-    const user = JSON.parse(localStorage.getItem('sf_user'));
-    if (user?.id) headers['x-user-id'] = user.id;
-  } catch {
+  // Si on a un token, on l'ajoute dans les headers
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
-  return headers;
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+
+  // Gestion basique des erreurs
+  if (!response.ok) {
+    throw new Error(`Erreur API (Code: ${response.status})`);
+  }
+
+  // Si c'est une suppression (code 204), il n'y a pas de JSON à lire
+  if (response.status === 204) {
+    return null;
+  }
+
+  return response.json();
 };
 
+// ==========================================
+// AUTHENTIFICATION
+// ==========================================
+
 export const login = async (email, password) => {
+  // Le backend attend un format formulaire classique pour le login
+  const formData = new URLSearchParams();
+  formData.append('username', email);
+  formData.append('password', password);
+
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/x-www-form-urlencoded'
     },
-    body: JSON.stringify({ email, password })
+    body: formData
   });
 
   if (!response.ok) throw new Error('Identifiants incorrects');
   return response.json();
 };
 
-export const register = async (userData) => {
-  const response = await fetch(`${API_URL}/auth/register`, {
+export const registerCompany = async (companyData) => {
+  return fetchWithAuth('/auth/register-company', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(userData)
+    body: JSON.stringify(companyData)
   });
-
-  if (!response.ok) throw new Error('Erreur lors de la création du compte');
-  return response.json();
 };
 
-export const getProducts = async () => {
-  const response = await fetch(`${API_URL}/products`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeaders()
-    }
+export const register = async (userData) => {
+  return fetchWithAuth('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(userData)
   });
+};
 
-  if (!response.ok) throw new Error('Erreur lors de la récupération des produits');
-  return response.json();
+// ==========================================
+// PRODUITS
+// ==========================================
+
+export const getProducts = async () => {
+  return fetchWithAuth('/products', { 
+    method: 'GET' 
+  });
 };
 
 export const createProduct = async (productData) => {
-  const response = await fetch(`${API_URL}/products`, {
+  return fetchWithAuth('/products', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeaders()
-    },
     body: JSON.stringify(productData)
   });
-
-  if (!response.ok) {
-    let detail = 'Erreur lors de la création du produit';
-    try {
-      const errData = await response.json();
-      detail = errData.detail || detail;
-    } catch {
-    }
-    throw new Error(detail);
-  }
-  return response.json();
 };
+
+// Correction : on utilise fetchWithAuth au lieu de api.put !
+export const updateProduct = async (productId, data) => {
+  return fetchWithAuth(`/products/${productId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  });
+};
+
+export const deleteProduct = async (productId) => {
+  return fetchWithAuth(`/products/${productId}`, { 
+    method: 'DELETE' 
+  });
+};
+
+// ==========================================
+// MOUVEMENTS DE STOCK
+// ==========================================
 
 export const getMovements = async () => {
-  const response = await fetch(`${API_URL}/movements`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeaders()
-    }
+  return fetchWithAuth('/movements', { 
+    method: 'GET' 
   });
-
-  if (!response.ok) throw new Error('Erreur lors de la récupération des mouvements');
-  return response.json();
 };
 
-export const addMovement = async (product_id, movementData) => {
-  const response = await fetch(`${API_URL}/movements/${product_id}`, {
+export const addMovement = async (productId, movementData) => {
+  return fetchWithAuth(`/movements/${productId}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeaders()
-    },
     body: JSON.stringify(movementData)
   });
-
-  if (!response.ok) {
-    let detail = 'Erreur lors de la création du mouvement';
-    try {
-      const errData = await response.json();
-      detail = errData.detail || detail;
-    } catch {
-    }
-    throw new Error(detail);
-  }
-  return response.json();
 };

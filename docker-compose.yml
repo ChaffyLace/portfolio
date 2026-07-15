@@ -1,18 +1,23 @@
-version: '3.8'
-
 services:
   stockflow_db:
     image: mysql:8.0
     container_name: stockflow_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root_password_secure
-      MYSQL_DATABASE: stockflow_db
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${DB_PORT}:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   stockflow_backend:
     build: ./backend
@@ -20,23 +25,26 @@ services:
     restart: always
     environment:
       - DB_HOST=stockflow_db
-      - DB_USER=root
-      - DB_PASSWORD=root_password_secure
-      - DB_NAME=stockflow_db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT}:8000"
     depends_on:
-      - stockflow_db
+      stockflow_db:
+        condition: service_healthy
 
   stockflow_frontend:
     build: ./frontend
     container_name: stockflow_frontend
     restart: always
     ports:
-      - "3000:3000"
-    depends_on:
-      - stockflow_backend
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - VITE_PORT=${FRONTEND_PORT}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
 volumes:
   db_data:
-  

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { login as apiLogin, register as apiRegister } from '../api/index.js';
+import { login as apiLogin, registerCompany as apiRegisterCompany, register as apiRegister } from '../api/index.js';
 
 const AuthContext = createContext();
 
@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const data = await apiLogin(email, password);
-
       const token = data.access_token;
       const userData = data.user;
 
@@ -40,18 +39,22 @@ export const AuthProvider = ({ children }) => {
       }
       return false;
     } catch (error) {
-      console.error("Erreur lors de la connexion:", error);
       throw error;
     }
   };
 
-  const register = async (name, email, password, role = 'user') => {
+  const registerCompany = async (companyData) => {
     try {
-      // apiRegister attend un seul objet { name, email, password, role }
-      const data = await apiRegister({ name, email, password, role });
-      return data;
+      return await apiRegisterCompany(companyData);
     } catch (error) {
-      console.error("Erreur lors de la création du compte:", error);
+      throw error;
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      return await apiRegister(userData);
+    } catch (error) {
       throw error;
     }
   };
@@ -64,7 +67,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, registerCompany, register, logout, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );
